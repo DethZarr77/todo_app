@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/main.dart';
 import 'package:todo_app/models/todo.dart';
@@ -15,6 +16,9 @@ class CompletedPage extends StatelessWidget {
     var filteredTodos =
         todoItems.todos.where((todo) => todo.isCompleted).toList();
 
+    var box = Hive.box(settingsBox);
+    var darkMode = box.get('darkMode', defaultValue: false);
+    var svgColor = darkMode ? Colors.white : Colors.black;
     const String assetName = 'images/sad-face-emoji.svg';
 
     if (filteredTodos.isEmpty) {
@@ -30,6 +34,7 @@ class CompletedPage extends StatelessWidget {
               semanticsLabel: 'Sad Face',
               height: 40,
               width: 40,
+              colorFilter: ColorFilter.mode(svgColor, BlendMode.srcIn),
             )
           ]));
     }
@@ -67,7 +72,6 @@ class CompletedListItem extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(15),
-        color: Colors.white,
       ),
       margin: EdgeInsets.only(bottom: 10),
       child: Row(
@@ -76,12 +80,10 @@ class CompletedListItem extends StatelessWidget {
           SizedBox(width: 10.0),
           Expanded(
               child: Column(
-            // mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 todo.name,
-                style: TextStyle(color: Colors.black),
               ),
               SizedBox(height: 5.0),
               Text('@ $completedDateString',

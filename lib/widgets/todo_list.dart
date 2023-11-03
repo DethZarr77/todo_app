@@ -52,22 +52,28 @@ class TodoListItem extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(15),
-        color: Colors.white,
       ),
       margin: EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          Checkbox(
-              value: todo.isCompleted,
-              onChanged: (isChecked) =>
-                  completeTodo(index, isChecked ?? false)),
-          SizedBox(width: 10.0),
-          Expanded(child: Text(todo.name)),
-          SizedBox(width: 10.0),
-          IconButton(
-              onPressed: () => removeTodo(index),
-              icon: Icon(Icons.delete, color: Colors.red)),
-        ],
+      child: Opacity(
+        opacity: todo.isCompleted ? 0.3 : 1.0,
+        child: Row(
+          children: [
+            Checkbox(
+                value: todo.isCompleted,
+                onChanged: (isChecked) =>
+                    completeTodo(index, isChecked ?? false)),
+            SizedBox(width: 10.0),
+            Expanded(child: Text(todo.name)),
+            SizedBox(width: 10.0),
+            IconButton(
+                onPressed: () => removeTodo(index),
+                icon: Icon(
+                  Icons.delete,
+                  color: Colors.red,
+                  semanticLabel: 'Delete this todo',
+                )),
+          ],
+        ),
       ),
     );
   }

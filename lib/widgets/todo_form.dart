@@ -48,14 +48,17 @@ class _TodoFormState extends State<TodoForm> {
               ),
             ),
             SizedBox(width: 10),
-            ElevatedButton(
-              onPressed: () {
-                _submitForm();
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(18),
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: ElevatedButton(
+                onPressed: () {
+                  _submitForm();
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(18),
+                ),
+                child: const Text('Add'),
               ),
-              child: const Text('Add'),
             ),
           ],
         ));
@@ -75,12 +78,10 @@ class FormTextInput extends StatelessWidget {
   final String labelText;
   // Callback function to handle input onChange
   final HandleChangeCallback handleChange;
-
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       decoration: InputDecoration(
-          // error: ,
           labelText: labelText,
           contentPadding: const EdgeInsets.all(15),
           border: OutlineInputBorder(

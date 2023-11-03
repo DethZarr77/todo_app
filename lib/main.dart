@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/models/todo.dart';
 
@@ -7,7 +9,12 @@ import 'package:todo_app/pages/completed_page.dart';
 import 'package:todo_app/pages/settings_page.dart';
 import 'package:todo_app/pages/todo_page.dart';
 
-void main() {
+const settingsBox = 'settings';
+
+void main() async {
+  await Hive.initFlutter();
+  await Hive.openBox(settingsBox);
+
   runApp(const MyApp());
 }
 
@@ -17,17 +24,44 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: MaterialApp(
-        title: 'Todo App',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-          useMaterial3: true,
-        ),
-        home: const BaseLayout(),
-      ),
+    return ValueListenableBuilder(
+      valueListenable: Hive.box(settingsBox).listenable(),
+      builder: (context, box, widget) {
+        var darkMode = box.get('darkMode', defaultValue: false);
+        return ChangeNotifierProvider(
+          create: (context) => MyAppState(),
+          child: MaterialApp(
+            title: 'Todo App',
+            debugShowCheckedModeBanner: false,
+            themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                  seedColor: Colors.red,
+                  background: Colors.white,
+                  brightness: Brightness.light),
+              textTheme: TextTheme(
+                bodyMedium: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+              useMaterial3: true,
+            ),
+            darkTheme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                  seedColor: Colors.red,
+                  background: Colors.black,
+                  brightness: Brightness.dark),
+              textTheme: TextTheme(
+                bodyMedium: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              useMaterial3: true,
+            ),
+            home: const BaseLayout(),
+          ),
+        );
+      },
     );
   }
 }
@@ -92,9 +126,11 @@ class BaseLayout extends StatelessWidget {
           title: Text(
             title,
             style: theme.textTheme.bodyMedium!.copyWith(
-                fontSize: 24.0,
-                color: theme.colorScheme.onPrimary,
-                fontWeight: FontWeight.bold),
+              fontSize: 24.0,
+              // color: theme.colorScheme.onPrimary,
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.onPrimary,
+            ),
           ),
           centerTitle: true,
           backgroundColor: theme.colorScheme.primary,
@@ -111,7 +147,7 @@ class BaseLayout extends StatelessWidget {
                 destinations: const [
                   NavigationRailDestination(
                     icon: Icon(Icons.list),
-                    label: Text('Todo'),
+                    label: Text('Todos'),
                   ),
                   NavigationRailDestination(
                     icon: Icon(Icons.check),
@@ -126,7 +162,6 @@ class BaseLayout extends StatelessWidget {
             ),
             Expanded(
                 child: Container(
-              color: Colors.white,
               padding: EdgeInsets.all(15),
               child: page,
             ))
