@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/utils/validators/text_validator.dart';
 
-typedef AddTodoCallback = void Function(String name);
+typedef AddTodoCallback = void Function(String name, String category);
 
 class TodoForm extends StatefulWidget {
   // const TodoForm({super.key});
@@ -18,13 +18,16 @@ final _formKey = GlobalKey<FormState>();
 class _TodoFormState extends State<TodoForm> {
   String _taskName = '';
 
+  List<String> items = ['Work', 'Personal', 'Shopping'];
+  String selectedCategory = 'Work';
+
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       // Call onSaved on every FormField
       _formKey.currentState!.save();
 
       // Run submit callback
-      widget.onSubmit(_taskName);
+      widget.onSubmit(_taskName, selectedCategory);
 
       // Reset form
       _formKey.currentState!.reset();
@@ -46,6 +49,28 @@ class _TodoFormState extends State<TodoForm> {
                   _taskName = value;
                 }),
               ),
+            ),
+            SizedBox(width: 10),
+            DropdownButton<String>(
+              value: selectedCategory,
+              icon: const Icon(Icons.arrow_downward),
+              elevation: 16,
+              underline: Container(
+                height: 2,
+              ),
+              onChanged: (String? value) {
+                // This is called when the user selects an item.
+                setState(() {
+                  selectedCategory = value!;
+                });
+              },
+              items: items.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
             ),
             SizedBox(width: 10),
             Padding(

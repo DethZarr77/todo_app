@@ -12,16 +12,16 @@ class CompletedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var todoItems = appState.todoCollection;
-    var filteredTodos =
-        todoItems.todos.where((todo) => todo.isCompleted).toList();
+    var todoCateogories = appState.todoCategoryCollection.todoCategories;
+
+    // var filteredTodos = todoItems.todos.where((todo) => todo.isCompleted).toList();
 
     var box = Hive.box(settingsBox);
     var darkMode = box.get('darkMode', defaultValue: false);
     var svgColor = darkMode ? Colors.white : Colors.black;
     const String assetName = 'images/sad-face-emoji.svg';
 
-    if (filteredTodos.isEmpty) {
+    if (todoCateogories.isEmpty) {
       return Center(
           child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -44,10 +44,11 @@ class CompletedPage extends StatelessWidget {
         ListView.builder(
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
-          itemCount: filteredTodos.length,
+          itemCount: todoCateogories.length,
           itemBuilder: (context, index) {
-            var todo = filteredTodos[index];
-            return CompletedListItem(todo: todo);
+            var todo = todoCateogories[index];
+            // return CompletedListItem(todo: todo);
+            return Text(todo.categoryName);
           },
         ),
       ],

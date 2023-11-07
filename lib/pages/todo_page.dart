@@ -10,15 +10,23 @@ class TodoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var todoItems = appState.todoCollection.todos;
+    var todoCategories = appState.todoCategoryCollection;
     var handleAddTodo = appState.handleAddTodo;
+    var handleAddFour = appState.handleAddFourTodos;
 
-    return Column(
-      children: [
-        TodoForm(onSubmit: handleAddTodo),
-        SizedBox(height: 16),
-        TodoList(todoCollection: todoItems),
-      ],
+    return Expanded(
+      child: Column(
+        children: [
+          TodoForm(onSubmit: handleAddTodo),
+          SizedBox(height: 16),
+          ElevatedButton(
+              onPressed: () {
+                handleAddFour('Custom Category');
+              },
+              child: Text('Add four todos')),
+          TodoList(todoCategories: todoCategories),
+        ],
+      ),
     );
   }
 }

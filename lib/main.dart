@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:collection/collection.dart';
+
 import 'package:todo_app/models/todo.dart';
 
 // Pages
@@ -67,7 +69,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var todoCollection = TodoCollection();
+  var todoCategoryCollection = TodoCategoryCollection();
+
   var selectedPageIndex = 0;
 
   void setSelectedPageIndex(int index) {
@@ -75,18 +78,58 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void handleAddTodo(String name) {
-    todoCollection.add(name);
+  void handleAddTodo(String name, String category) {
+    print('handleAddTodo called - $name $category');
+    // print(category);
+
+    var foundCategory = todoCategoryCollection.todoCategories
+        .firstWhereOrNull((element) => element.categoryName == category);
+
+    if (foundCategory != null) {
+      foundCategory.addTodoToCategory(name);
+    } else {
+      var todoCategory = TodoCategory(categoryName: category);
+      todoCategory.addTodoToCategory(name);
+      todoCategoryCollection.addCategory(todoCategory);
+    }
+
     notifyListeners();
   }
 
-  void handleRemoveTodo(int index) {
-    todoCollection.remove(index);
+  void handleAddFourTodos(String categoryName) {
+    handleAddTodo(
+      'Buy milk',
+      categoryName,
+    );
+    handleAddTodo(
+      'Buy eggs',
+      categoryName,
+    );
+    handleAddTodo(
+      'Buy bread',
+      categoryName,
+    );
+    handleAddTodo(
+      'Buy butter',
+      categoryName,
+    );
+  }
+
+  void handleRemoveTodo(int id, String categoryName) {
+    var foundCategory = todoCategoryCollection.todoCategories
+        .firstWhereOrNull((category) => category.categoryName == categoryName);
+    if (foundCategory != null) {
+      foundCategory.todoCollection.remove(id);
+    }
     notifyListeners();
   }
 
-  void handleCompleteTodo(int index, bool isCompleted) {
-    todoCollection.setCompleted(index, isCompleted);
+  void handleCompleteTodo(int id, String categoryName, bool isCompleted) {
+    var foundCategory = todoCategoryCollection.todoCategories
+        .firstWhereOrNull((category) => category.categoryName == categoryName);
+    if (foundCategory != null) {
+      foundCategory.todoCollection.setCompleted(id, isCompleted);
+    }
     notifyListeners();
   }
 }

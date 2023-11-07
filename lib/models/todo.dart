@@ -37,16 +37,55 @@ class TodoCollection {
     _todos.add(todo);
   }
 
-  void remove(int index) {
-    _todos.removeAt(index);
+  void remove(int id) {
+    _todos.removeWhere((element) => element.id == id);
   }
 
-  void setCompleted(int index, bool isCompleted) {
+  void setCompleted(int id, bool isCompleted) {
+    var index = _todos.indexWhere((element) => element.id == id);
     _todos[index]._isCompleted = isCompleted;
     if (isCompleted) {
       _todos[index]._dateCompleted = DateTime.now();
     } else {
       _todos[index]._dateCompleted = null;
     }
+  }
+}
+
+class TodoCategory {
+  late String _categoryName;
+  late TodoCollection _todoCollection;
+
+  TodoCategory({required String categoryName}) {
+    _categoryName = categoryName;
+    _todoCollection = TodoCollection();
+  }
+
+  String get categoryName => _categoryName;
+  TodoCollection get todoCollection => _todoCollection;
+
+  void addTodoToCategory(String name) {
+    todoCollection.add(name);
+  }
+
+  void removeTodoFromCategory(int index) {
+    todoCollection.remove(index);
+  }
+}
+
+class TodoCategoryCollection {
+  late List<TodoCategory> _todoCategories;
+
+  TodoCategoryCollection() {
+    _todoCategories = <TodoCategory>[];
+  }
+  List<TodoCategory> get todoCategories => _todoCategories;
+
+  void addCategory(TodoCategory category) {
+    _todoCategories.add(category);
+  }
+
+  void removeCategory(int index) {
+    _todoCategories.removeAt(index);
   }
 }
